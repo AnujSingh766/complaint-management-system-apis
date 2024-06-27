@@ -97,16 +97,17 @@ exports.updateUser = async (req, res) => {
     });
   }
 };
-
 // Delete a user
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({
-      code: 404,
-      message: 'User not found',
-      data: null
-    });
+    if (!user) {
+      return res.status(404).json({
+        code: 404,
+        message: 'User not found',
+        data: null
+      });
+    }
     await user.remove();
     res.status(204).json({
       code: 204,
