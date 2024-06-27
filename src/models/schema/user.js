@@ -8,8 +8,11 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     phone_number: { type: Number, required: true },
-    room_number: { type: Number, required: false }
-});
+    is_admin: { type: Boolean, required: false, default: false },
+    first_login: { type: Boolean, required: false, default: true },
+    otp_login: { type: Boolean, required: false, default: false },
+    is_deleted: { type: Boolean, required: false, default: false },
+}, { timestamps: true });
 
 // Hash password before saving to database
 UserSchema.pre('save', async function (next) {

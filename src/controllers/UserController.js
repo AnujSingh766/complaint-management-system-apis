@@ -1,13 +1,14 @@
-const User = require('../models/schema/user');
+
+const userService = require('../services/userService');
 
 // Get all users
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await userService.getAllUsers();
     res.status(200).json({
       code: 200,
       message: 'Users fetched successfully',
-      data:users
+      data: users
     });
   } catch (err) {
     console.log(err);
@@ -22,7 +23,7 @@ exports.getAllUsers = async (req, res) => {
 // Get user by ID
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await userService.getUserById(req.params.id);
     if (!user) return res.status(404).json({
       code: 404,
       message: 'User not found',
@@ -45,15 +46,8 @@ exports.getUserById = async (req, res) => {
 // Create a new user
 exports.createUser = async (req, res) => {
   try {
-    const { name, email,password, phone_number, room_number } = req.body;
-    const newUser = new User({
-      name,
-      email,
-      password,
-      phone_number,
-      room_number
-    });
-    const user = await newUser.save();
+    const reqData = { name, email, password, phone_number, room_number, is_admin } = req.body;
+    const user = await userService.createUser(reqData);
     res.status(201).json({
       code: 201,
       message: 'User created successfully',
@@ -72,18 +66,13 @@ exports.createUser = async (req, res) => {
 // Update a user
 exports.updateUser = async (req, res) => {
   try {
-    const { name, email, phone_number, room_number } = req.body;
-    const user = await User.findById(req.params.id);
+    const updateData = { name, email, phone_number, room_number } = req.body;
+    const user = await userService.updateUser(req.params.id, updateData);
     if (!user) return res.status(404).json({
       code: 404,
       message: 'User not found',
       data: null
     });
-    user.name = name;
-    user.email = email;
-    user.phone_number = phone_number;
-    user.room_number = room_number;
-    await user.save();
     res.status(200).json({
       code: 200,
       message: 'User updated successfully',
@@ -97,10 +86,11 @@ exports.updateUser = async (req, res) => {
     });
   }
 };
+
 // Delete a user
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await userService.deleteUser(req.params.id);
     if (!user) {
       return res.status(404).json({
         code: 404,
@@ -108,13 +98,13 @@ exports.deleteUser = async (req, res) => {
         data: null
       });
     }
-    await user.remove();
     res.status(204).json({
       code: 204,
       message: 'User deleted successfully',
       data: null
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       code: 500,
       message: 'Server error',

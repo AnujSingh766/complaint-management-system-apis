@@ -1,8 +1,5 @@
 // controllers/authController.js
-
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/schema/user');
+const authService = require('../services/authService');
 
 // Login controller
 exports.login = async (req, res) => {
@@ -10,7 +7,7 @@ exports.login = async (req, res) => {
 
   try {
     // Check if user exists
-    const user = await User.findOne({ email });
+    const user = await authService.findUserByEmail(email);
     if (!user) {
       return res.status(404).json({
         code: 404,
@@ -20,7 +17,7 @@ exports.login = async (req, res) => {
     }
 
     // Verify password
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await authService.verifyPassword(password, user.password);
     if (!isMatch) {
       return res.status(401).json({
         code: 401,
@@ -30,11 +27,7 @@ exports.login = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign(
-      { userId: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+    const token = authService.generateToken(user);
 
     res.status(200).json({
       code: 200,
@@ -44,7 +37,9 @@ exports.login = async (req, res) => {
         user: {
           id: user._id,
           name: user.name,
-          email: user.email
+          email: user.email,
+          is_admin: user.is_admin,
+          
           // Add other fields as needed
         }
       }
