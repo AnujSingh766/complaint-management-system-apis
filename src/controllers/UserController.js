@@ -1,22 +1,17 @@
 
 const userService = require('../services/userService');
+const { UserListResponse } = require('../utils/userlistResponse');
 
 // Get all users
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await userService.getAllUsers();
-    res.status(200).json({
-      code: 200,
-      message: 'Users fetched successfully',
-      data: users
-    });
+    const response = UserListResponse(users); // Transform the users data
+
+    res.status(200).json({ code: 200, message: 'Users fetched successfully', data: response });
   } catch (err) {
     console.log(err);
-    res.status(500).json({
-      code: 500,
-      message: 'Server error',
-      data: null
-    });
+    res.status(500).json({ code: 500, message: 'Server error', data: null });
   }
 };
 
@@ -48,6 +43,7 @@ exports.createUser = async (req, res) => {
   try {
     const reqData = { name, email, password, phone_number, room_number, is_admin } = req.body;
     const user = await userService.createUser(reqData);
+    
     res.status(201).json({
       code: 201,
       message: 'User created successfully',

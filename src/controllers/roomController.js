@@ -1,20 +1,14 @@
-const roomService = require('../services/roomService')
+const roomService = require('../services/roomService');
+const { RoomListResponse } = require('../utils/roomlistResponse');
 
 exports.getAllRooms = async (req, res) => {
     try {
         const rooms = await roomService.getAllUsers();
-        res.status(200).json({
-            code: 200,
-            message: 'Fetched successfully',
-            data: rooms
-        });
+        const response = RoomListResponse(rooms);
+        res.status(200).json({ code: 200, message: 'Fetched successfully', data: response });
     } catch (err) {
         console.log(err);
-        res.status(500).json({
-            code: 500,
-            message: 'Server error',
-            data: null
-        });
+        res.status(500).json({ code: 500, message: 'Server error', data: null });
     }
 };
 
@@ -75,26 +69,25 @@ exports.updateRoom = async (req, res) => {
 exports.deleteRoom = async (req, res) => {
     const roomId = req.params.id;
     try {
-      const deletedRoom = await roomService.deleteRoom(roomId);
-      if (!deletedRoom) {
-        return res.status(404).json({
-          code: 404,
-          message: 'Room not found',
-          data: null
+        const deletedRoom = await roomService.deleteRoom(roomId);
+        if (!deletedRoom) {
+            return res.status(404).json({
+                code: 404,
+                message: 'Room not found',
+                data: null
+            });
+        }
+        res.status(200).json({
+            code: 200,
+            message: 'Room deleted successfully',
+            data: null
         });
-      }
-      res.status(200).json({
-        code: 200,
-        message: 'Room deleted successfully',
-        data: null
-      });
     } catch (err) {
-      console.error('Delete room error:', err);
-      res.status(500).json({
-        code: 500,
-        message: 'Server error',
-        data: null
-      });
+        console.error('Delete room error:', err);
+        res.status(500).json({
+            code: 500,
+            message: 'Server error',
+            data: null
+        });
     }
-  };
-  
+};

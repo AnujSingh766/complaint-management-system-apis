@@ -1,4 +1,3 @@
-// models/User.js
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
@@ -8,10 +7,10 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     phone_number: { type: Number, required: true },
-    is_admin: { type: Boolean, required: false, default: false },
-    first_login: { type: Boolean, required: false, default: true },
-    otp_login: { type: Boolean, required: false, default: false },
-    is_deleted: { type: Boolean, required: false, default: false },
+    is_admin: { type: Boolean, required: true, default: false },
+    first_login: { type: Boolean, required: true, default: true },
+    otp_login: { type: Boolean, required: true, default: false },
+    is_deleted: { type: Boolean, required: true, default: false },
 }, { timestamps: true });
 
 // Hash password before saving to database
