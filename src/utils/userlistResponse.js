@@ -9,6 +9,7 @@ const User = (user) => {
         name: userWithoutV.name,
         email: userWithoutV.email,
         phone_number: userWithoutV.phone_number,
+        room_number: userWithoutV.room_number,
     };
 };
 

@@ -3,7 +3,20 @@ const User = require('../models/schema/user');
 
 
 exports.getAllUsers = async () => {
-    return await User.find({ is_deleted: false }).select('-password');
+    // Fetch all users excluding deleted ones and without password
+    const users = await User.find({ is_deleted: false }).select('-password');
+
+    // Populate room numbers for each user
+    const populatedUsers = await Promise.all(users.map(async (user) => {
+        const allotedRoom = await AllotedRoom.findOne({ user: user._id }).populate('room').exec();
+        const room_number = allotedRoom ? allotedRoom.room.room_number : null;
+        return {
+            ...user.toObject(),
+            room_number
+        };
+    }));
+
+    return populatedUsers;
 };
 
 exports.getUserById = async (id) => {
