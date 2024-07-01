@@ -6,7 +6,7 @@ const Room = (room) => {
         room_number: roomWithoutV.room_number,
         floor: roomWithoutV.floor,
         capacity: roomWithoutV.capacity,
-        amenities: roomWithoutV.amenities
+        amenities: roomWithoutV.amenities,
     };
 };
 
@@ -14,5 +14,6 @@ const Room = (room) => {
 const RoomListResponse = (rooms) => rooms.map(Room);
 
 module.exports = {
+    Room,
     RoomListResponse,
 };

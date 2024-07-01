@@ -42,13 +42,22 @@ exports.getUserById = async (req, res) => {
 exports.createUser = async (req, res) => {
   try {
     const reqData = { name, email, password, phone_number, room_number, is_admin } = req.body;
-    const user = await userService.createUser(reqData);
-    
-    res.status(201).json({
-      code: 201,
-      message: 'User created successfully',
-      data: user
-    });
+    const result = await userService.createUser(reqData);
+
+    if (result.error) {
+      return res.status(409).json({
+        code: 409,
+        message: result.error,
+        data: null
+      });
+    } else {
+      return res.status(201).json({
+        code: 201,
+        message: 'User created successfully',
+        data: result
+      });
+
+    }
   } catch (err) {
     console.log(err);
     res.status(500).json({

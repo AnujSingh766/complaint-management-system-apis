@@ -25,23 +25,24 @@ exports.getUserById = async (id) => {
 
 exports.createUser = async (userData) => {
 
-    const userCheck = await User.findOne({ email: userData.email })
-    if (userCheck) {
-        return ({ alreadyUser: true });
+    const existingUser = await User.findOne({ email: userData.email, is_deleted: false })
+    if (existingUser) {
+        return { error: 'User already exists' };
     } else {
         const roomAvialble = await AllotedRoom.findOne({ room: userData.room_id, is_checkout: false });
 
         if (roomAvialble) {
-            return ({ roomAvialble: false });
+            return { error: 'Room not available!' };
+        } else {
+            const newUser = new User(userData);
+            await newUser.save();
+
+            const allotRoomData = { user: newUser._id, room: userData.room_id, }
+            const newRoomAllotment = new AllotedRoom(allotRoomData);
+            await newRoomAllotment.save();
+
+            return newUser;
         }
-        const newUser = new User(userData);
-        await newUser.save();
-
-        const allotRoomData = { user: newUser._id, room: userData.room_id, }
-        const newRoomAllotment = new AllotedRoom(allotRoomData);
-        await newRoomAllotment.save();
-
-        return newUser;
     }
 };
 
