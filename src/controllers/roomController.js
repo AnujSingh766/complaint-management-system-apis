@@ -35,10 +35,11 @@ exports.addRoom = async (req, res) => {
                 data: null
             });
         } else {
+            const response = Room(result);
             return res.status(201).json({
                 code: 201,
                 message: 'Room added successfully',
-                data: room
+                data: response
             });
         }
     } catch (err) {

@@ -57,10 +57,12 @@ exports.addRoom = async (roomData) => {
         // If room already exists, return a message or error
         return { error: 'Room with the same room number already exists' };
     }
+    else {
+        // If no existing room is found, create a new room
+        const newRoom = await Room.create(roomData);
+        return newRoom;
 
-    // If no existing room is found, create a new room
-    const newRoom = await Room.create(roomData);
-    return newRoom;
+    }
 };
 
 // Update a room by ID
